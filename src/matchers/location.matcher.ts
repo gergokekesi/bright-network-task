@@ -64,7 +64,7 @@ export const locationMatcher = (priority: number = 1): Matcher => {
         )}`
       )
 
-      return allLocationRelatedKeywords.some((keyword) => lowerCaseBio.includes(keyword.toLowerCase()))
+      return allLocationRelatedKeywords.some((keyword) => lowerCaseBio.includes(` ${keyword.toLowerCase()} `))
     },
     match: (user, job) => {
       const { preferred, excluded } = extractLocationPreference(user.bio)

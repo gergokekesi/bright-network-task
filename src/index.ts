@@ -1,4 +1,6 @@
+import { experienceLevelMatcher } from "./matchers/experienceLevel.matcher"
 import { locationMatcher } from "./matchers/location.matcher"
+import { roleMatcher } from "./matchers/role.matcher"
 import { createJobService } from "./services/job.service"
 import { createRecommendationService } from "./services/recommendation.service"
 import { createUserService } from "./services/user.service"
@@ -12,20 +14,23 @@ const main = async () => {
     const userService = createUserService()
 
     const users = await userService.getUsers()
+    const jobs = await jobService.getJobs()
 
-    const recommendationService = await createRecommendationService(jobService, userService, [locationMatcher()], 0.7)
-
-    const recommendations = await recommendationService.getRecommendations()
+    const { recommend } = await createRecommendationService(
+      [locationMatcher(), roleMatcher(), experienceLevelMatcher()],
+      0.7
+    )
 
     logger.info(`Recommended jobs for all users:`)
     users.forEach((user) => {
       logger.info(`Name: ${user.name}`)
       logger.info(`Bio: ${user.bio}`)
       logger.info(`Recommendations:`)
-      if (recommendations[user.name].length === 0) {
+      const recommendations = recommend(user, jobs)
+      if (recommendations.length === 0) {
         logger.info(`- No recommendations found`)
       } else {
-        recommendations[user.name].forEach((recommendation) => {
+        recommendations.forEach((recommendation) => {
           logger.info(`- ${recommendation.job.title} in ${recommendation.job.location} (${recommendation.score})`)
         })
       }

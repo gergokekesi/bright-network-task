@@ -5,22 +5,15 @@ import { UserService } from "../../../src/services/user.service"
 
 describe("RecommendationService", () => {
   it("should return a list of recommendations", async () => {
-    const jobService: JobService = {
-      getJobs: jest.fn().mockResolvedValue([
-        { title: "Software Developer", location: "London" },
-        { title: "Software Developer", location: "Bristol" },
-      ]),
-    }
-    const userService: UserService = {
-      getUsers: jest.fn().mockResolvedValue([{ name: "Grace", bio: "Looking for software jobs in London" }]),
-    }
-    const recommendationService: RecommendationService = await createRecommendationService(
-      jobService,
-      userService,
-      [locationMatcher()],
-      0.7
-    )
-    const recommendations = await recommendationService.getRecommendations()
-    expect(recommendations).toEqual({ Grace: [{ job: { title: "Software Developer", location: "London" }, score: 1 }] })
+    const user = { name: "Grace", bio: "I am currently in London" }
+    const jobs = [
+      { title: "Software Developer", location: "London" },
+      { title: "Software Developer", location: "Bristol" },
+    ]
+
+    const recommendationService: RecommendationService = await createRecommendationService([locationMatcher()], 0.7)
+
+    const { recommend } = recommendationService
+    expect(recommend(user, jobs)).toEqual([{ job: { title: "Software Developer", location: "London" }, score: 1 }])
   })
 })

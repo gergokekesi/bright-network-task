@@ -9,7 +9,6 @@ dist/
 
 # project files to not commit
 keys/
-.env
 
 # Compiled Java class files
 *.class

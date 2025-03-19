@@ -20,8 +20,24 @@ npm ci
 
 to install the necessary node modules (as defined in the package-lock.json file)
 
-Then, to run the application, use
+(Note, a .env file is committed in the repo as it doesn't contain anything secret at the moment.)
+
+Then, transpile the TypeScript by running:
+
+```sh
+npm run build
+```
+
+Finally, to run the application, run
 
 ```sh
 npm start
 ```
+
+Alternatively, to run nodemon so you can have hot-reloading while developing, you can run
+
+```sh
+npm run dev
+```
+
+This will run the application in watch mode and re-run it when you make changes.

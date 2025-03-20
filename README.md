@@ -60,11 +60,11 @@ npm run test:watch
 
 # Acknowledgement of the problem
 
-The problem of matching users with jobs is, as I have discovered, quite complex. There's a lot of nuance behind human speech and idioms, negation and the true intent behind someones words. My solution is pretty basic, though I have enjoyed tweaking the parameters to at least have the happy path working well (the jobs and users provided from the interview task json files). There are a lot of edge cases and having a pre-defined list of hardcoded words to look for is not a very flexible solution. I have written tests as I went along to help create the matchers and to think about some of the uses cases. Some of these tests I have left as failing in order to demonstrate some of the scenarios where my solution falls short. Hopefully my solution is appreciated.
+The problem of matching users with jobs is, as I have discovered, quite complex. There's a lot of nuance behind human speech and idioms, negation and the true intent behind someones words. My solution is pretty simple, though I have enjoyed tweaking the parameters to at least have the happy path working well (the jobs and users provided from the interview task json files). There are a lot of edge cases and having a pre-defined list of hardcoded words to look for is not a very flexible solution. I have written tests as I went along to help create the matchers and to think about some of the uses cases. Some of these tests I have left as failing in order to demonstrate some of the scenarios where my solution falls short. Hopefully my solution is appreciated.
 
 # Architecture
 
-I have decided to layout the application such that it would be easy to extend, keeping the logic separated into different services. Being mindful of the request to not over complicate things and have 10 different modules, I tried to keep the solution simple yet still forward thinking, as if this was a real development task. I structured the solution as I would a typical project, separating concerns and making the recommendation service closed for modification but open to extension. I setup the basics I would start with in all projects, including eslint, prettier and jest tests.
+I have decided to layout the application such that it would be easy to extend, keeping the logic separated into different services. Being mindful of the request to not over complicate things and have 10 different modules, I tried to keep the solution simple yet still forward thinking, as if this was a real development task. I structured the solution as I would a typical project, separating concerns and making the recommendation service closed for modification but open to extension. I setup the basics I would start with in all projects, including eslint, prettier and jest tests. The application is executed from the index.ts file when it's ran. A user service is responsible for providing users, the job service provides the jobs and the recommendation service has a function which given a user and a list of jobs, recommends the most appropriate job, based on the matching functions provided at the time of creating the service.
 
 - Services
   - Jobs service
@@ -81,7 +81,7 @@ I have decided to layout the application such that it would be easy to extend, k
   - Matchers are functions that determine, based on a certain criteria, if a user's bio matches a given job.
   - They have four main properties
     - The **name** of the matcher (mostly used for debugging purposes)
-    - **match** function - this function executes the logic of the matching
+    - **match** function - this function executes the logic of the matching and given a user and a list of jobs, returns an array of jobs along with a score between 0 and 1 where 1 is a perfect match and 0 is not a match at all
     - **isRelevant** function - this function determines if this matcher should be used given a user's bio. I felt this was important as some users' bios do not limit them to a given location for example. For example, they may want to work anywhere and so a location matcher's score should not be taken into account in the final score as it may skew the result.
     - Initially, I have also introduced '**priority**' for which the thinking was that you could give a higher weight to a certain matcher should you wish. I haven't utilised this however.
   - **Experience Level Matcher**

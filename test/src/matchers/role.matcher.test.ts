@@ -1,7 +1,7 @@
 import { roleMatcher } from "../../../src/matchers/role.matcher"
 import { Matcher } from "../../../src/types"
 
-describe("roleMatcher", () => {
+describe("RoleMatcher", () => {
   let matcher: Matcher
 
   beforeEach(() => {

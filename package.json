@@ -8,7 +8,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "build": "rm -rf ./dist && tsc",
-    "start": "node -r dotenv/config ./dist/src/index.js"
+    "start": "node -r dotenv/config ./dist/index.js"
   },
   "author": "Gergo Kekesi (Greg)",
   "license": "ISC",

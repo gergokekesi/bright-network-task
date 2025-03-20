@@ -1,4 +1,3 @@
-import { MOCK_USERS } from "../../test/mock/users.mock"
 import { User, userSchema } from "../types"
 import { getConfig } from "../utils/config.util"
 
@@ -18,7 +17,7 @@ export const createUserService = (): UserService => {
 
     const users = await response.json()
 
-    return MOCK_USERS.map((user: any) => userSchema.parse(user))
+    return users.map((user: any) => userSchema.parse(user))
   }
   return {
     getUsers,

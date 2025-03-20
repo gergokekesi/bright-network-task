@@ -60,9 +60,11 @@ npm run test:watch
 
 # Acknowledgement of the problem
 
+The problem of matching users with jobs is, as I have discovered, quite complex. There's a lot of nuance behind human speech and idioms, negation and the true intent behind someones words. My solution is pretty basic, though I have enjoyed tweaking the parameters to at least have the happy path working well (the jobs and users provided from the interview task json files). There are a lot of edge cases and having a pre-defined list of hardcoded words to look for is not a very flexible solution. I have written tests as I went along to help create the matchers and to think about some of the uses cases. Some of these tests I have left as failing in order to demonstrate some of the scenarios where my solution falls short. Hopefully my solution is appreciated.
+
 # Architecture
 
-I have decided to layout the application such that it would be easy to extend, keeping the logic separated into different services. Being mindful of the request to not over complicate things and have 10 different modules, I tried to keep the solution simple yet still forward thinking, as if this was a real development task.
+I have decided to layout the application such that it would be easy to extend, keeping the logic separated into different services. Being mindful of the request to not over complicate things and have 10 different modules, I tried to keep the solution simple yet still forward thinking, as if this was a real development task. I structured the solution as I would a typical project, separating concerns and making the recommendation service closed for modification but open to extension. I setup the basics I would start with in all projects, including eslint, prettier and jest tests.
 
 - Services
   - Jobs service
@@ -101,3 +103,24 @@ I have decided to layout the application such that it would be easy to extend, k
     - It instantiates a user service, a job service and the recommendation service with the three matchers available
     - Then for every user, it calls the **recommend** function to get the list of recommended jobs for them
     - Thought about making a CLI tool or a small Reach frontend but given the request to not over complicate the solution, I decided against this
+
+# Shortcomings
+
+Some of the problems with the solutions are:
+
+- The Location Matcher used alone on a bio that doesn’t specify a location will mean that matcher is not relevant to the user and therefore no jobs will be returned when perhaps all jobs should be
+- Location matcher doesn’t use similarity index but just uses plain old includes and looks for exact matches only
+- Location matcher will work as long as the location after the location keyword is at the end of the bio. It currently picks the rest of the string after the matched location keyword instead of picking the next city, it also won’t work for scenarios like “outside of the big city of London”
+- The values for the cutoff and priorities for the matcher are ambiguous. It is unclear if the values I set are over-fitted to the existing dataset. Should the cutoff be 0.7 or 0.6? Will that throw away potential jobs that would be relevant due to incorrect configuration?
+- Experience Level matcher doesn't use similarity index either so typos will mean jobs are missed.
+- I'm sure there's more I haven't yet thought of!
+
+# Further improvements and suggestions
+
+This has been an interesting problem and has highlighted the difficulty in free text parsing to me. Looking at the delivered solution, in retrospect, these are some of the things I would consider if given more time or the solution needed to be more robust:
+
+- Parse the jobs up-front to create properties for them which could make the comparison more structured. Do the same for users and then the matchers can be more specific, targeting only a certain property on the user and job objects. Creating structured data from non structured data would aid in the recommendation. This is likely what various CV parsing tools do. Likewise for job spec parsers.
+- Use natural language processing and AI tools to parse non-structured free text bios to aid in the extraction of key fields from both job specs as well as user bios. There are a lot of edge cases that need to be handled in a scenario like this: typos, things not appearing in the expected order, meaning of the text and the sentiment behind it. All of these could be taken into account with more robust matchers.
+- The matching is done synchronously at the moment. With more complex matching algorithms this would not be suitable and instead async operations, perhaps using cron jobs, cloud scheduled tasks or even a queue system would aid in the user experience
+- Of course, a UI would be great for a solution like this. I decided not to do one here (other than the logging output) however it wouldn't have been too difficult to serve up the recommendations and the jobs/users as an API and have a frontend consume it
+- The solution could in the future be more data-driven, such that the matching words or properties matched are defined in a database or collection and these can be edited on the fly allowing run time modification of the matching algorithms, perhaps based on user preferences or an admin site updating and tweaking parameters.
